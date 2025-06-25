@@ -1,4 +1,5 @@
 # from colorama import Fore
+import movie_storage
 from random import randint
 from statistics import median, mean
 
@@ -73,36 +74,32 @@ def list_movies(movies):
 
 
 def add_movie(movies):
-    """Add a new movie to the database"""
+    """Adds a new movie to the database (json file) if it not already exists"""
     print()
-    movie = input("Please enter the movie title: ")
-    rating = float(input("Please enter the rating: "))
+    title = input("Please enter the movie title: ")
+    rating = input("Please enter the rating: ")
     year = input("Please enter the year: ")
-    movies.append({'title': movie, 'data': {'rating': rating, 'year': year}})
+    for movie in movies:
+        if movie['title'].lower() == title.lower():
+            print("Movie already exists")
+            return
+    movie_storage.add_movie(title, float(rating), year)
+    print(f"Movie {title} successfully added")
 
 
 def delete_movie(movies):
     """Delete a movie from the database"""
     print()
     movie_to_delete = input("Please enter a movie to delete: ")
-    for movie in movies:
-        if movie_to_delete == movie['title']:
-            del movies[movies.index(movie)]
-            print(f"\n{movie['title']} deleted")
-            return
-    print("Error: movie not in database")
+    movie_storage.delete_movie(movie_to_delete)
 
 
 def update_movie(movies):
     """Update a movies rating"""
     print()
     movie_to_update = input("Please enter a movie to update rating: ")
-    for movie in movies:
-        if movie_to_update in movie['title']:
-            new_rating = input("Please enter new rating: ")
-            movies[movies.index(movie)]['data']['rating'] = new_rating
-            return
-    print("Error: movie not in database")
+    new_rating = input("Please enter new rating: ")
+    movie_storage.update_movie(movie_to_update, new_rating)
 
 
 def print_best_worst_movie(my_movie_list):
@@ -135,54 +132,12 @@ def print_stats(movies):
 
 
 def main():
-    # Dictionary to store the movies and the rating
-    movies = [
-      {
-        "title": "The Shawshank Redemption",
-        "data": {"rating": 9.5, "year": "1987"}
-      },
-      {
-        "title": "Pulp Fiction",
-        "data": {"rating": 8.8, "year": "1987"}
-      },
-      {
-        "title": "The Room",
-        "data": {"rating": 3.6, "year": "1987"}
-      },
-      {
-        "title": "The Godfather",
-        "data": {"rating": 9.2, "year": "1987"}
-      },
-      {
-        "title": "The Godfather: Part II",
-        "data": {"rating": 9.0, "year": "1987"}
-      },
-      {
-        "title": "The Dark Knight",
-        "data": {"rating": 9.0, "year": "1987"}
-      },
-      {
-        "title": "12 Angry Men",
-        "data": {"rating": 8.9, "year": "1987"}
-      },
-      {
-        "title": "Everything Everywhere All At Once",
-        "data": {"rating": 8.9, "year": "1987"}
-      },
-      {
-        "title": "Forrest Gump",
-        "data": {"rating": 8.8, "year": "1987"}
-      },
-      {
-        "title": "Star Wars: Episode V",
-        "data": {"rating": 8.7, "year": "1987"}
-      },
-    ]
 
     app_title = "My Movies Database"
 
     print(f"{'*'*10} {app_title} {'*'*10}")
     while True:
+        movies = movie_storage.get_movies()
         display_main_menu()
         user_input = input("Enter choice (0-8): ")
         if user_input != "0":
