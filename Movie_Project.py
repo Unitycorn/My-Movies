@@ -43,7 +43,10 @@ def execute_user_input(input_string, movies):
     """Function dispatcher"""
     function_dict = {'1': list_movies, '2': add_movie, '3': delete_movie, '4': update_movie,
                      '5': print_stats, '6': print_random_movie, '7': search_movie, '8': print_sorted_movies}
-    function_dict[input_string](movies)
+    if input_string in function_dict.keys():
+        function_dict[input_string](movies)
+    else:
+        print("\nError: Wrong input!")
 
 
 def print_sorted_movies(movies):
@@ -57,7 +60,12 @@ def print_sorted_movies(movies):
 def search_movie(movies):
     """Compares the movie titles with a given string and printing matching movies"""
     print()
-    search_term = input("Enter part of movie name: ")
+    while True:
+        search_term = input("Enter part of movie name: ")
+        if search_term != '':
+            break
+        else:
+            print("\nError: name must not be empty!\n")
     print("\nFound movie(s):\n")
     for movie in movies:
         if search_term.lower() in movie['title'].lower():
@@ -75,30 +83,69 @@ def list_movies(movies):
 
 def add_movie(movies):
     """Adds a new movie to the database (json file) if it not already exists"""
+    rating = 0.0
+    year = 1900
     print()
-    title = input("Please enter the movie title: ")
-    rating = input("Please enter the rating: ")
-    year = input("Please enter the year: ")
+    while True:
+        title = input("Please enter the movie title: ")
+        if title != '':
+            try:
+                rating = float(input("Please enter the rating: "))
+            except ValueError:
+                print("\nError: Rating must be a number!\n")
+                continue
+            year = input("Please enter the year: ")
+            if year != '' and len(year) == 4:
+                break
+            else:
+                print("\nError: Year must be a 4 digit number!\n")
+        else:
+            print("\nError: Title must not be empty!\n")
     for movie in movies:
         if movie['title'].lower() == title.lower():
             print("Movie already exists")
             return
-    movie_storage.add_movie(title, float(rating), year)
+    movie_storage.add_movie(title, rating, year)
     print(f"Movie {title} successfully added")
 
 
 def delete_movie(movies):
     """Delete a movie from the database"""
     print()
-    movie_to_delete = input("Please enter a movie to delete: ")
-    movie_storage.delete_movie(movie_to_delete)
+    while True:
+        movie_to_delete = input("Please enter a movie to delete: ")
+        if movie_to_delete != '':
+            movie_storage.delete_movie(movie_to_delete)
+            break
+        else:
+            print("\nError: Title must not be empty!\n")
 
 
 def update_movie(movies):
     """Update a movies rating"""
+    new_rating = 0.0
     print()
-    movie_to_update = input("Please enter a movie to update rating: ")
-    new_rating = input("Please enter new rating: ")
+    while True:
+        movie_to_update = input("Please enter a movie to update rating: ")
+        if movie_to_update == '':
+            print("\nError: Title must not be empty!\n")
+            continue
+        else:
+            movie_found = False
+            for movie in movies:
+                if movie_to_update.lower() == movie['title'].lower():
+                    movie_found = True
+                    break
+                if movies.index(movie) == len(movies) - 1:
+                    print("\nError 404: Movie not found!\n")
+            if not movie_found:
+                continue
+            try:
+                new_rating = float(input("Please enter the new rating: "))
+            except ValueError:
+                print("\nError: Rating must be a number!\n")
+                continue
+            break
     movie_storage.update_movie(movie_to_update, new_rating)
 
 
@@ -146,7 +193,7 @@ def main():
             input("Press enter to continue...")
         elif user_input == "0":
             print("Bye!")
-            return True
+            return
 
 
 if __name__ == "__main__":

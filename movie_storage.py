@@ -63,6 +63,5 @@ def update_movie(title, rating):
         if title in movie['title']:
             movies[movies.index(movie)]['data']['rating'] = rating
             save_movies(movies)
-            print(f"\n{movie['title']} updated")
+            print(f"\n{movie['title']} successfully updated!")
             return
-    print("Error: Movie not in database")
