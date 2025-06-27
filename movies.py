@@ -2,6 +2,7 @@ import movie_storage_sql as storage
 import data_fetcher
 from random import randint
 from statistics import median, mean
+import website_generator
 
 
 def display_main_menu():
@@ -17,7 +18,12 @@ def display_main_menu():
     print("6. Random movie")
     print("7. Search movie")
     print("8. Movies sorted by rating")
+    print("9. Generate website")
     print()
+
+
+def generate_website():
+    return website_generator.generate_html()
 
 
 def create_sorted_movie_list(movies):
@@ -43,7 +49,8 @@ def print_random_movie():
 def execute_user_input(input_string):
     """Function dispatcher"""
     function_dict = {'1': list_movies, '2': add_movie, '3': delete_movie, '4': update_movie,
-                     '5': print_stats, '6': print_random_movie, '7': search_movie, '8': print_sorted_movies}
+                     '5': print_stats, '6': print_random_movie, '7': search_movie, '8': print_sorted_movies,
+                     '9': generate_website}
     if input_string in function_dict.keys():
         function_dict[input_string]()
     else:
@@ -192,7 +199,7 @@ def main():
     print(f"{'*'*10} {app_title} {'*'*10}")
     while True:
         display_main_menu()
-        user_input = input("Enter choice (0-8): ")
+        user_input = input("Enter choice (0-9): ")
         if user_input != "0":
             execute_user_input(user_input)
             print()

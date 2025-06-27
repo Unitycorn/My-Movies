@@ -21,6 +21,3 @@ def fetch_data(title):
         return None
     else:
         return data.json()
-
-
-print(fetch_data("bosanova"))
