@@ -1,4 +1,5 @@
 import movie_storage_sql as storage
+import data_fetcher
 from random import randint
 from statistics import median, mean
 
@@ -22,7 +23,7 @@ def display_main_menu():
 def create_sorted_movie_list(movies):
     """Creates a list of movie data tuples and sorts the list by rating"""
     movie_list = []
-    for movie, data in movies:
+    for movie, data in movies.items():
         movie_list.append((movie, data['rating'], data['year']))
     movie_list.sort(key=lambda tup: tup[1], reverse=True)  # sort by rating, descending
     return movie_list
@@ -70,7 +71,7 @@ def search_movie():
             print("\nError: name must not be empty!\n")
     print("\nFound movie(s):\n")
     found_movies = 0
-    for movie, data in movies:
+    for movie, data in movies.items():
         if search_term.lower() in movie.lower():
             print(f"{movie} ({data['year']}): {data['rating']}")
             found_movies += 1
@@ -91,8 +92,6 @@ def list_movies():
 def add_movie():
     """Adds a new movie to the database if it not already exists"""
     movies = storage.load_movies()
-    rating = 0.0
-    year = 1900
     print()
     while True:
         title_exists = False
@@ -104,27 +103,24 @@ def add_movie():
                     print("\nError: Movie already exists\n")
             if title_exists:
                 continue
-            try:
-                rating = float(input("Please enter the rating: "))
-            except ValueError:
-                print("\nError: Rating must be a number!\n")
-                continue
-            year = input("Please enter the year: ")
-            if year != '' and len(year) == 4:
-                break
             else:
-                print("\nError: Year must be a 4 digit number!\n")
+                break
         else:
             print("\nError: Title must not be empty!\n")
-    storage.add_movie(title, rating, year)
-    print(f"Movie {title} successfully added")
+    movie_to_add = data_fetcher.fetch_data(title)
+    if movie_to_add:
+        title = movie_to_add["Title"]
+        rating = movie_to_add["Ratings"][0]["Value"].split("/")[0]  # IMDB rating
+        year = movie_to_add["Year"]
+        poster = movie_to_add["Poster"]
+        storage.add_movie(title, year, rating, poster)
 
 
-def delete_movie(movies):
+def delete_movie():
     """Delete a movie from the database"""
     print()
     while True:
-        movie_to_delete = input("Please enter a movie to delete: ")
+        movie_to_delete = input("Please enter a movie to delete: ").capitalize()
         if movie_to_delete != '':
             storage.delete_movie(movie_to_delete)
             break
