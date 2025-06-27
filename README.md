@@ -1,7 +1,7 @@
 # My movies app 🎥
 This app was developed in the SE program at Masterschool.
 
-Its an CLI tool to list, add, delete movies from an SQLite database, show different statistics, find and get a random movie to enjoy your evening.
+Its an CLI tool to list, add, delete movies from an SQLite database, show different statistics, find movie by title and get a random movie to enjoy your evening.
 
 Newly added movies just require a title, the rest of the data gets fetched from [OMDb API](https://www.omdbapi.com/). (You need an API key, which is not provided in this repo)
 ## Key features 🔑
