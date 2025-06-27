@@ -3,77 +3,91 @@
         "title": "The Shawshank Redemption",
         "data": {
             "rating": 9.5,
-            "year": "1987"
+            "year": "1994"
         }
     },
     {
         "title": "Pulp Fiction",
         "data": {
             "rating": 8.8,
-            "year": "1987"
+            "year": "1994"
         }
     },
     {
         "title": "The Room",
         "data": {
             "rating": 3.6,
-            "year": "1987"
+            "year": "2003"
         }
     },
     {
         "title": "The Godfather",
         "data": {
             "rating": 9.2,
-            "year": "1987"
+            "year": "1972"
         }
     },
     {
         "title": "The Godfather: Part II",
         "data": {
             "rating": 9.0,
-            "year": "1987"
+            "year": "1974"
         }
     },
     {
         "title": "The Dark Knight",
         "data": {
             "rating": 9.0,
-            "year": "1987"
+            "year": "2008"
         }
     },
     {
         "title": "12 Angry Men",
         "data": {
             "rating": 8.9,
-            "year": "1987"
+            "year": "1957"
         }
     },
     {
         "title": "Everything Everywhere All At Once",
         "data": {
             "rating": 8.9,
-            "year": "1987"
+            "year": "2022"
         }
     },
     {
         "title": "Forrest Gump",
         "data": {
             "rating": 8.8,
-            "year": "1987"
+            "year": "1994"
         }
     },
     {
         "title": "Star Wars: Episode V",
         "data": {
             "rating": 8.7,
-            "year": "1987"
+            "year": "1980"
         }
     },
     {
         "title": "Titanic",
         "data": {
             "rating": 7.0,
-            "year": "1990"
+            "year": "1997"
+        }
+    },
+    {
+        "title": "Shaun of the Dead",
+        "data": {
+            "rating": 9.2,
+            "year": "2004"
+        }
+    },
+    {
+        "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+        "data": {
+            "rating": 9.9,
+            "year": "2003"
         }
     }
 ]

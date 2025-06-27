@@ -1,5 +1,4 @@
 import json
-import os
 
 
 def get_movies():
@@ -20,9 +19,12 @@ def save_movies(movies):
     """
     Gets all your movies as an argument and saves them to the JSON file.
     """
-    with open("data.json", "w") as handle:
-        json.dump(movies, handle, indent=4)
-        handle.close()
+    try:
+        with open("data.json", "w") as handle:
+            json.dump(movies, handle, indent=4)
+            handle.close()
+    except OSError:
+        print("Couldn't open file.")
 
 
 def add_movie(title, rating, year):
