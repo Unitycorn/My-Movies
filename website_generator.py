@@ -1,7 +1,7 @@
-import movie_storage_sql as storage
+from movie_storage import movie_storage_sql as storage
 
 HTML_TEMPLATE_FILE = '_static/index_template.html'
-NEW_HML_FILE = 'index.html'
+NEW_HML_FILE = 'web/index.html'
 TITLE_REPLACE_STRING = "__TEMPLATE_TITLE__"
 CONTENT_REPLACE_STRING = "__TEMPLATE_MOVIE_GRID__"
 

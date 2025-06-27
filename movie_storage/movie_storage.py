@@ -9,7 +9,7 @@ def get_movies():
     The function loads the information from the JSON
     file and returns the data.
     """
-    with open("data.json", "r") as handle:
+    with open("../data/data.json", "r") as handle:
         data = json.load(handle)
         handle.close()
         return data
@@ -20,7 +20,7 @@ def save_movies(movies):
     Gets all your movies as an argument and saves them to the JSON file.
     """
     try:
-        with open("data.json", "w") as handle:
+        with open("../data/data.json", "w") as handle:
             json.dump(movies, handle, indent=4)
             handle.close()
     except OSError:

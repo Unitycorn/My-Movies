@@ -1,4 +1,4 @@
-import movie_storage_sql as storage
+from movie_storage import movie_storage_sql as storage
 import data_fetcher
 from random import randint
 from statistics import median, mean
