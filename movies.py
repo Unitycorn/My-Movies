@@ -1,4 +1,5 @@
 from movie_storage import movie_storage_sql as storage
+from users import user_profiles
 import data_fetcher
 from random import randint
 from statistics import median, mean
@@ -22,8 +23,8 @@ def display_main_menu():
     print()
 
 
-def generate_website():
-    return website_generator.generate_html()
+def generate_website(user):
+    return website_generator.generate_html(user)
 
 
 def create_sorted_movie_list(movies):
@@ -35,9 +36,9 @@ def create_sorted_movie_list(movies):
     return movie_list
 
 
-def print_random_movie():
+def print_random_movie(user):
     """Selects a random movie from a sorted list and prints its infos"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     my_movie_list = create_sorted_movie_list(movies)
     selection = randint(0, len(my_movie_list)-1)
     selected_movie = my_movie_list[selection]
@@ -46,29 +47,31 @@ def print_random_movie():
     print(f"{selected_movie[0]} ({selected_movie[2]}): {selected_movie[1]}")
 
 
-def execute_user_input(input_string):
+def execute_user_input(input_string, username):
     """Function dispatcher"""
     function_dict = {'1': list_movies, '2': add_movie, '3': delete_movie, '4': update_movie,
                      '5': print_stats, '6': print_random_movie, '7': search_movie, '8': print_sorted_movies,
                      '9': generate_website}
     if input_string in function_dict.keys():
-        function_dict[input_string]()
+        function_dict[input_string](username)
     else:
         print("\nError: Wrong input!")
 
 
-def print_sorted_movies():
+def print_sorted_movies(user):
     """Prints a sorted list of movies by rating, descending"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     my_movie_list = create_sorted_movie_list(movies)
     print("\nMovies sorted by rating:\n")
     for movie in my_movie_list:
         print(f"{movie[0]} ({movie[2]}): {movie[1]}")
+    if len(my_movie_list) == 0:
+        print(f"You have no movies in your collection, {user}")
 
 
-def search_movie():
+def search_movie(user):
     """Compares the movie titles with a given string and printing matching movies"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     print()
     while True:
         search_term = input("Enter part of movie name: ")
@@ -86,19 +89,21 @@ def search_movie():
         print("\nNo movies found!\n")
 
 
-def list_movies():
+def list_movies(user):
     """List all movies in the database (unsorted) and the total of movies in the db"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     print()
     print(f"{len(movies)} in total")
     print()
+    if len(movies) == 0:
+        print(f"{user}, your collection is empty. Try adding some movies!")
     for movie, data in movies.items():
         print(f"{movie} ({data['year']}): {data['rating']}")
 
 
-def add_movie():
+def add_movie(user):
     """Adds a new movie to the database if it not already exists"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     print()
     while True:
         title_exists = False
@@ -110,8 +115,7 @@ def add_movie():
                     print("\nError: Movie already exists\n")
             if title_exists:
                 continue
-            else:
-                break
+            break
         else:
             print("\nError: Title must not be empty!\n")
     movie_to_add = data_fetcher.fetch_data(title)
@@ -120,27 +124,39 @@ def add_movie():
         rating = movie_to_add["Ratings"][0]["Value"].split("/")[0]  # IMDB rating
         year = movie_to_add["Year"]
         poster = movie_to_add["Poster"]
-        storage.add_movie(title, year, rating, poster)
+        imdb_id = movie_to_add["imdbID"]
+        storage.add_movie(title, year, rating, poster, '', imdb_id, user)
 
 
-def delete_movie():
+def delete_movie(user):
     """Delete a movie from the database"""
+    movies = storage.load_movies(user)
     print()
-    while True:
-        movie_to_delete = input("Please enter a movie to delete: ").capitalize()
-        if movie_to_delete != '':
-            storage.delete_movie(movie_to_delete)
-            break
+    title_exists = False
+    movie_to_delete = input("Please enter a movie to delete: ").capitalize()
+    if movie_to_delete != '':
+        for movie in movies:
+            if movie.lower() == movie_to_delete.lower():
+                title_exists = True
+                break
+        if title_exists:
+            try:
+                storage.delete_movie(movie_to_delete, user)
+            except Exception as e:
+                print(f"Error: {e}")
         else:
-            print("\nError: Title must not be empty!\n")
+            print("\nError: Movie not found!")
+    else:
+        print("\nError: Title must not be empty!\n")
 
 
-def update_movie(movies):
+def update_movie(user):
     """Update a movies rating"""
-    new_rating = 0.0
+    movies = storage.load_movies(user)
+    note = ""
     print()
     while True:
-        movie_to_update = input("Please enter a movie to update rating: ")
+        movie_to_update = input("Please enter a movie title to update: ")
         if movie_to_update == '':
             print("\nError: Title must not be empty!\n")
             continue
@@ -150,17 +166,12 @@ def update_movie(movies):
                 if movie_to_update.lower() == movie.lower():
                     movie_found = True
                     break
-                if movies.index(movie) == len(movies) - 1:
-                    print("\nError 404: Movie not found!\n")
             if not movie_found:
+                print("\nError 404: Movie not found!\n")
                 continue
-            try:
-                new_rating = float(input("Please enter the new rating: "))
-            except ValueError:
-                print("\nError: Rating must be a number!\n")
-                continue
+            note = input("\nAdd a personal note for this movie: ")
             break
-    storage.update_movie(movie_to_update, new_rating)
+    storage.update_movie(movie_to_update, note, user)
 
 
 def print_best_worst_movie(my_movie_list):
@@ -179,9 +190,9 @@ def print_best_worst_movie(my_movie_list):
             print(f"\nWorst rated movie:\n{movie[0]} ({movie[2]}): {movie[1]}")
 
 
-def print_stats():
+def print_stats(user):
     """Prints statistics about the movies based on ratings"""
-    movies = storage.load_movies()
+    movies = storage.load_movies(user)
     my_movie_list = create_sorted_movie_list(movies)
     ratings = []
     for movie in my_movie_list:
@@ -194,18 +205,21 @@ def print_stats():
 
 
 def main():
-    """Prints the app title and the menu, calls the chosen function from dispatcher until choice is '0'"""
+    """
+    Prints the app title, user selection and the menu, calls the chosen function from dispatcher until choice is '0'
+    """
     app_title = "My Movies Database"
     print(f"{'*'*10} {app_title} {'*'*10}")
+    user = user_profiles.get_user()
     while True:
         display_main_menu()
-        user_input = input("Enter choice (0-9): ")
+        user_input = input(f"{user}, enter your choice (0-9): ")
         if user_input != "0":
-            execute_user_input(user_input)
+            execute_user_input(user_input, user)
             print()
             input("Press enter to continue...")
         elif user_input == "0":
-            print("Bye!")
+            print(f"Until next time, {user}!")
             return
 
 

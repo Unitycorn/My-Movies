@@ -5,11 +5,13 @@ NEW_HML_FILE = 'web/index.html'
 TITLE_REPLACE_STRING = "__TEMPLATE_TITLE__"
 CONTENT_REPLACE_STRING = "__TEMPLATE_MOVIE_GRID__"
 
+IMDB_URL = "https://www.imdb.com/title/"
 
-def save_website(content):
+
+def save_website(content, user):
     """ Writes an HTML file """
     try:
-        with open(NEW_HML_FILE, 'w') as file:
+        with open(f"web/{user}.html", 'w') as file:
             file.write(content)
         print("Website was generated successfully.")
     except OSError:
@@ -23,24 +25,31 @@ def load_template():
         return html_content
 
 
-def serialize_movies():
-    movies = storage.load_movies()
+def serialize_movies(user):
+    movies = storage.load_movies(user)
     html_string = ""
     for movie, data in movies.items():
         poster = data['poster']
         title = movie
         year = data['year']
+        note = data['notes']
+        rating = data['rating']
+        imdb_id = data['imdb_id']
+        if note == "" or note is None:
+            note = title
         html_string += f"<li>\n<div class='movie'>\n"
-        html_string += f"<img class='movie-poster' src='{poster}'\\>\n"
+        html_string += f"<a href='{IMDB_URL}{imdb_id}' target='_blank'>\n"
+        html_string += f"<img class='movie-poster' src='{poster}' title='{note}'\\>\n</a>"
         html_string += f"<div class='movie-title'>{title}</div>\n"
         html_string += f"<div class='movie-year'>{year}</div>\n"
+        html_string += f"<p class='movie-rating'>IMDB-rating: <b>{rating}</b></p>\n"
         html_string += f"</div>\n</li>\n"
     return html_string
 
 
-def generate_html():
+def generate_html(user):
     template = load_template()
-    movies_as_html = serialize_movies()
-    template = template.replace(TITLE_REPLACE_STRING, "My favourite movies")
+    movies_as_html = serialize_movies(user)
+    template = template.replace(TITLE_REPLACE_STRING, f"{user}'s favourite movies collection 🎥")
     final_html_code = template.replace(CONTENT_REPLACE_STRING, movies_as_html)
-    save_website(final_html_code)
+    save_website(final_html_code, user)
