@@ -23,13 +23,13 @@ with engine.connect() as connection:
 def load_movies(user):
     """Retrieve all movies from the database."""
     with engine.connect() as connection:
-        result = connection.execute(text("""SELECT title, year, rating, poster, notes, imdb_id FROM movies
+        result = connection.execute(text("""SELECT title, year, rating, country, poster, notes, imdb_id FROM movies
                                          JOIN users ON users.id = movies.user_id WHERE users.name = :user"""),
                                             {"user": user})
         movies = result.fetchall()
 
-    return {row[0]: {"year": row[1], "rating": row[2], "poster": row[3],
-                     "notes": row[4], 'imdb_id': row[5]} for row in movies}
+    return {row[0]: {"year": row[1], "rating": row[2], "poster": row[4],
+                     "notes": row[5], 'imdb_id': row[6], "country": row[3]} for row in movies}
 
 
 def get_user_id(user):
@@ -44,15 +44,14 @@ def get_user_id(user):
             print(f"Error: {e}")
 
 
-
-def add_movie(title, year, rating, poster, notes, imdb_id, user):
+def add_movie(title, year, country, rating, poster, notes, imdb_id, user):
     """Add a new movie to the database."""
     user_id = get_user_id(user)
     with engine.connect() as connection:
         try:
-            connection.execute(text("""INSERT INTO movies (title, year, rating, poster, notes, imdb_id, user_id) 
-                                       VALUES (:title, :year, :rating, :poster, :notes, :imdb_id, :user_id)"""),
-                               {"title": title, "year": year, "rating": rating,
+            connection.execute(text("""INSERT INTO movies (title, year, country, rating, poster, notes, imdb_id, user_id) 
+                                       VALUES (:title, :year, :country, :rating, :poster, :notes, :imdb_id, :user_id)"""),
+                               {"title": title, "year": year, "country": country, "rating": rating,
                                 "poster": poster, "notes": notes, 'imdb_id': imdb_id, 'user_id': user_id})
             connection.commit()
             print(f"Movie '{title}' added successfully to {user}'s collection.")

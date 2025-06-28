@@ -1,12 +1,14 @@
 body {
-  background: #F5F5F0;
+  background: linear-gradient(82.3deg, white 10.8%, grey 94.3%);;
   color: black;
   font-family: Monaco;
+  padding: 0;
+  margin: 0;
 }
 
 .list-movies-title {
   padding: 10px 0;
-  background: red;
+  background: linear-gradient(82.3deg, rgb(150, 93, 233) 10.8%, rgb(99, 88, 238) 94.3%);
   color: white;
   text-align: center;
   font-size: 16pt;
@@ -19,6 +21,7 @@ body {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .movie-grid li {
@@ -41,7 +44,7 @@ body {
 }
 
 .movie-year {
-  color: #999;
+  font-style: italic;
 }
 
 
@@ -49,4 +52,14 @@ body {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     width: 128px;
     height: 193px;
+}
+
+a:hover .movie-poster{
+  width: 130px;
+  height: 195px
+}
+
+.movie-rating{
+  font-size: 0.8em;
+  text-align: center;
 }

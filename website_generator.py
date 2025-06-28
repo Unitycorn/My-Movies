@@ -1,4 +1,5 @@
 from movie_storage import movie_storage_sql as storage
+import countryflag
 
 HTML_TEMPLATE_FILE = '_static/index_template.html'
 NEW_HML_FILE = 'web/index.html'
@@ -28,22 +29,29 @@ def load_template():
 def serialize_movies(user):
     movies = storage.load_movies(user)
     html_string = ""
-    for movie, data in movies.items():
-        poster = data['poster']
-        title = movie
-        year = data['year']
-        note = data['notes']
-        rating = data['rating']
-        imdb_id = data['imdb_id']
-        if note == "" or note is None:
-            note = title
-        html_string += f"<li>\n<div class='movie'>\n"
-        html_string += f"<a href='{IMDB_URL}{imdb_id}' target='_blank'>\n"
-        html_string += f"<img class='movie-poster' src='{poster}' title='{note}'\\>\n</a>"
-        html_string += f"<div class='movie-title'>{title}</div>\n"
-        html_string += f"<div class='movie-year'>{year}</div>\n"
-        html_string += f"<p class='movie-rating'>IMDB-rating: <b>{rating}</b></p>\n"
-        html_string += f"</div>\n</li>\n"
+    if not movies:
+        html_string += "<h1>Quite empty here, huh?</h1>"
+    else:
+        for movie, data in movies.items():
+            poster = data['poster']
+            title = movie
+            year = data['year']
+            country = []
+            countries = data['country']
+            country.append(countries.split(", ")[-1])
+            note = data['notes']
+            rating = data['rating']
+            imdb_id = data['imdb_id']
+            if note == "" or note is None:
+                note = title
+            flag = countryflag.getflag(country)
+            html_string += f"<li>\n<div class='movie'>\n"
+            html_string += f"<a href='{IMDB_URL}{imdb_id}' target='_blank'>\n"
+            html_string += f"<img class='movie-poster' src='{poster}' title='{note}'\\>\n</a>"
+            html_string += f"<div class='movie-title'>{title} {flag}</div>\n"
+            html_string += f"<div class='movie-year'>{year}</div>\n"
+            html_string += f"<p class='movie-rating'>IMDB-rating: <b>{rating}</b></p>\n"
+            html_string += f"</div>\n</li>\n"
     return html_string
 
 

@@ -123,9 +123,10 @@ def add_movie(user):
         title = movie_to_add["Title"]
         rating = movie_to_add["Ratings"][0]["Value"].split("/")[0]  # IMDB rating
         year = movie_to_add["Year"]
+        country = movie_to_add["Country"]
         poster = movie_to_add["Poster"]
         imdb_id = movie_to_add["imdbID"]
-        storage.add_movie(title, year, rating, poster, '', imdb_id, user)
+        storage.add_movie(title, year, country, rating, poster, '', imdb_id, user)
 
 
 def delete_movie(user):
