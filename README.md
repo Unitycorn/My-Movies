@@ -11,7 +11,11 @@ The website contains an overview from all of your movies with title, year and th
 
 ## Installation 💻
 
-Simply clone this repo, run ```pip install -r requirements.txt``` and run ```python3 main.py```! 
+Simply clone this repo, run ```pip install -r requirements.txt```, 
+
+get an API-Key from [OMDb API](https://www.omdbapi.com/) and put it into an ```.env```-file (API_KEY = "YOUR KEY"),
+
+and then run ```python3 main.py```! 
 ## Key features 🔑
 Techstack: Python, HTML5, CSS, SQLite, REST-APIs
 
